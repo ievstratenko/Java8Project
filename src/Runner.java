@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -23,22 +24,19 @@ public class Runner {
 
         Stream<Person> persons = PersonHelper.getPersons().parallelStream();
 
-        System.out.println("====1");
+        Consumer<Object> so = System.out::println;
 
-        IntStream intStream = persons.peek(System.out::println)
+        IntStream intStream = persons
                 .map((Person p) -> p.getAge())
-                .peek((a) -> {
-                    System.out.println(a + " " + Thread.currentThread().getName());
-                })
                 .filter((Integer age) -> age > 25)
-                .peek(System.out::println)
-                .flatMapToInt((Integer age) -> IntStream.of(age))
-                .peek(System.out::println);
-
-        System.out.println("====2");
+                .flatMapToInt((Integer age) -> IntStream.of(age));
 
         intStream.average().ifPresent(System.out::println);
 
-        //System.out.println(intStream.average().getAsDouble());
+        Function<Person, Stream<Person>> flatMapF = p -> p.getFriends().stream();
+        PersonHelper.getPersons().stream().flatMap(flatMapF)
+                .distinct()
+                .forEach(so);
+
     }
 }
