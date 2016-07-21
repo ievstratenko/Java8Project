@@ -1,32 +1,25 @@
 import java.util.Arrays;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Runner {
-    public static void main(String[] args) {
-        String[] words = {"Test", "lol", "abcde", "XYZ", "123"};
-        boolean lower = false;
-        UnaryOperator<String> toLowerCase1 = new UnaryOperator<String>() {
-            @Override
-            public String apply(String s) {
-                return s.toLowerCase();
-            }
-        };
-        UnaryOperator<String> toLowerCase2 = (String s) -> {
-            return s.toLowerCase();
-        };
-        UnaryOperator<String> toLowerCase3 = (String s) -> s.toLowerCase();
-        UnaryOperator<String> toLowerCase4 = (s) -> s.toLowerCase();
-        UnaryOperator<String> toLowerCase5 = s -> s.toLowerCase();
-        UnaryOperator<String> toLowerCase6 = String::toLowerCase;
 
-        UnaryOperator<String> toLowerCase = String::toLowerCase;
-        UnaryOperator<String> toUpperCase = s -> s.toUpperCase();
-        UnaryOperator<String> f = lower ? toLowerCase : toUpperCase;
-        for (int i = 0; i < words.length; i++) {
-            words[i] = f.apply(words[i]);
-        }
-        System.out.println(Arrays.toString(words));
+    public static void main(String[] args) {
+        Predicate<String> isEmpty = String::isEmpty;
+        Predicate<String> isNotEmpty = isEmpty.negate();
+        System.out.println(isNotEmpty.test(""));
+
+        Function<String, Integer> length = String::length;
+        System.out.println(length.apply("abcd"));
+
+        Stream<Object> numbers = Stream.of(1, 4, 2, "a");
+
+        String[] words = {"abc", "XYZ", "test", "ABC", "123456"};
+        Stream<String> wordsStream = Arrays.stream(words);
+
+        Stream<Double> doubleStream = Stream.generate(() -> Math.random()).limit(10);
+
 
     }
 }
