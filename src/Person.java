@@ -6,6 +6,11 @@ public class Person {
     private Person boss;
     private List<Person> friends;
 
+    public Person(String name, Integer age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public Person(String name, Integer age, Person boss, List<Person> friends) {
         this.name = name;
         this.age = age;
