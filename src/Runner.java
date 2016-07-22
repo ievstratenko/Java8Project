@@ -1,20 +1,19 @@
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class Runner {
     static int result;
 
     public static void main(String[] args) throws Exception {
         p("START");
-        Callable<Integer> task = Runner::calculate;
-        ExecutorService es = Executors.newFixedThreadPool(10);
-        Future<Integer> future = es.submit(task);
+        Supplier<Integer> task = Runner::calculate;
+        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(task)
+                .thenAccept(Runner::p)
+                .thenRun(() -> p("done"));
 
         p("some another task running...");
 
-        result = future.get();
+        cf.get();
         p(result);
     }
 
