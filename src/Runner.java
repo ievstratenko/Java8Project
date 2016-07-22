@@ -1,13 +1,20 @@
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class Runner {
     static int result;
 
     public static void main(String[] args) throws Exception {
         p("START");
-        Runnable r = () -> result = calculate();
-        Thread t = new Thread(r);
-        t.start();
+        Callable<Integer> task = Runner::calculate;
+        ExecutorService es = Executors.newFixedThreadPool(10);
+        Future<Integer> future = es.submit(task);
 
-        t.join();
+        p("some another task running...");
+
+        result = future.get();
         p(result);
     }
 
