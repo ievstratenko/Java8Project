@@ -5,16 +5,23 @@ public class Runner {
     static int result;
 
     public static void main(String[] args) throws Exception {
-        p("START");
-        Supplier<Integer> task = Runner::calculate;
-        CompletableFuture<Void> cf = CompletableFuture.supplyAsync(task)
-                .thenAccept(Runner::p)
-                .thenRun(() -> p("done"));
+        long start = System.currentTimeMillis();
 
-        p("some another task running...");
+        CompletableFuture<Integer> cf1 = CompletableFuture
+                .supplyAsync(Runner::calculate)
+                .thenApply(Runner::increment);
+        CompletableFuture<Integer> cf2 = CompletableFuture
+                .supplyAsync(Runner::calculate)
+                .thenApply(Runner::increment);
+        CompletableFuture<Integer> cf3 = cf1.thenCombine(cf2, (r1, r2) -> r1 + r2);
 
-        cf.get();
-        p(result);
+        p("result=" + cf3.get());
+        p(cf1.get());
+
+        long duration = System.currentTimeMillis() - start;
+
+
+        p("duration=" + duration);
     }
 
     static Integer calculate() {
@@ -26,6 +33,18 @@ public class Runner {
         }
         p("calculate finish");
         return 1;
+    }
+
+    static Integer increment(Integer i) {
+        p("calculate start. i=" + i);
+        try {
+            i++;
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        p("calculate finish. i=" + i);
+        return i;
     }
 
     static void p(Object o) {
