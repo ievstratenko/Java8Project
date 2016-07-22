@@ -1,14 +1,23 @@
 public class Runner {
+    static int result;
 
     public static void main(String[] args) throws Exception {
         p("START");
-        int result = calculate();
+        Runnable r = () -> result = calculate();
+        Thread t = new Thread(r);
+        t.start();
+
+        t.join();
         p(result);
     }
 
-    static Integer calculate() throws InterruptedException {
+    static Integer calculate() {
         p("calculate start");
-        Thread.sleep(1000);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         p("calculate finish");
         return 1;
     }
